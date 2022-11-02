@@ -42,4 +42,4 @@ class Communication(object):
                 return content
             return None
 
-comm = Communication("172.22.15.2",9999)
+comm = Communication("127.0.0.1",77777)
