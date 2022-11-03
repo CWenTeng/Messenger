@@ -1,10 +1,25 @@
 import threading
 import traceback
+import ctypes
+from cache import Constant
 import tkinter
 from communication import comm
+from communication import Communication
 import time
 
+
+class Down_win:
+    def create(self):
+        self.root = tkinter.Toplevel()
+        self.root.title('下载子窗')  # 标题
+        self.root.geometry('400x200')
+        self.source_path_entry = tkinter.Entry(self.root, width=50)
+        self.source_path_entry.place(x=10,y=10)
+        self.targ_path_entry = tkinter.Entry(self.root, width=50)
+        self.targ_path_entry.place(x=10,y=50)
+
 class Client:
+    
     
     def __init__(self) -> None:
         self.Text = tkinter.Text(self.root, width=100, height=20)
@@ -19,9 +34,16 @@ class Client:
                                     font=('微软雅黑', 16), 
                                     command=lambda:self.send_event(),
                                     width=10,
-                                    height=4
+                                    height=2
                                     )
-        send_button.place(x=600, y=300)
+        send_button.place(x=600, y=355)
+        down_button = tkinter.Button(text='Down', 
+                                    font=('微软雅黑', 16), 
+                                    command=lambda:self.down_win(),
+                                    width=10,
+                                    height=1
+                                    )
+        down_button.place(x=600, y=300)
         
     
     def send_event(self):
@@ -44,10 +66,47 @@ class Client:
         self.root.mainloop()
 
     root = tkinter.Tk()
-    root.title = '通讯'  # 标题
+    root.title('通讯')  # 标题
     root.geometry('800x500+400+200')  # 窗体位置
     
+    # root.after(1000,root2)
 
+    def down(self,win):
+        tar = win.targ_path_entry.get()
+        source = win.source_path_entry.get()
+        win.targ_path_entry.place_forget()
+        win.source_path_entry.place_forget()
+        targ_path_entry = tkinter.Entry(win.root, width=50)
+        targ_path_entry.place(x=10,y=50)
+        targ_path_entry.config(state=tkinter.DISABLED)
+        comm = Communication(Constant.IP,Constant.PORT)
+        comm.send(source,Constant.FILE_TYPE)
+        comm_file = comm.clientRecv_file(tar)
+            # persent = next(comm_file)
+        while True:
+            try:
+                persent = next(comm_file)
+                print(persent)
+                targ_path_entry.config(state=tkinter.NORMAL)
+                # targ_path_entry.insert("1.0",persent)
+                targ_path_entry.delete(0,tkinter.END)
+                targ_path_entry.insert(0,f"{persent[0]} / {persent[1]}")
+                targ_path_entry.config(state=tkinter.DISABLED)
+            except Exception as e:
+                print(traceback.format_exc())
+                print(e)
+                break
+
+
+    def down_win(self):
+        win = Down_win()
+        win.create()
+        down_button = tkinter.Button(win.root,text='Down', 
+                            font=('微软雅黑', 16), 
+                            command=lambda:self.down(win),
+                            width=4
+                            )
+        down_button.place(x=300,y=80)
 
 
 if __name__ == "__main__":
@@ -56,7 +115,10 @@ if __name__ == "__main__":
         while True:
             message = comm.clientRecv()
             if message:
-                c.recv_message(message)
+                if message[0] == Constant.TEXT_TYPE:
+                    c.recv_message(message[1])
+                elif message[0] == Constant.FILE_TYPE:
+                    pass
             else:
                 time.sleep(0.1)  
     
