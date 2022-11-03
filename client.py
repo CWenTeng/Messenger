@@ -83,15 +83,19 @@ class Client:
         comm.send(source,Constant.FILE_TYPE)
         comm_file = comm.clientRecv_file(tar)
             # persent = next(comm_file)
+        i = 0.1;
         while True:
             try:
                 persent = next(comm_file)
-                print(persent)
-                targ_path_entry.config(state=tkinter.NORMAL)
+                if persent[2]/persent[1] >= i:
+                    i += 0.1
+                    print(persent)
+                # TODO 进度条待改造
+                # targ_path_entry.config(state=tkinter.NORMAL)
                 # targ_path_entry.insert("1.0",persent)
-                targ_path_entry.delete(0,tkinter.END)
-                targ_path_entry.insert(0,f"{persent[0]} / {persent[1]}")
-                targ_path_entry.config(state=tkinter.DISABLED)
+                # targ_path_entry.delete(0,tkinter.END)
+                # targ_path_entry.insert(0,f"{persent[0]} / {persent[1]}")
+                # targ_path_entry.config(state=tkinter.DISABLED)
             except Exception as e:
                 print(traceback.format_exc())
                 print(e)

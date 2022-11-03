@@ -69,7 +69,6 @@ class Communication(object):
                 content = 0
                 with open(tar,'wb') as f:
                     while message_len > content:
-                        print("fa")
                         data = self.s.recv(1024)
                         # if data:
                         f.write(data)
@@ -77,6 +76,7 @@ class Communication(object):
                         yield (content,message_len)
                         # else:
                         #     break
+                print("{content} / {message_len}")
                 print("接收完毕")
                         
         except:
