@@ -7,5 +7,5 @@ recvQ = Queue()
 
 TEXT_TYPE = b'0'
 FILE_TYPE = b'1'
-IP = '172.22.15.2'
+# IP = 'localhost'
 PORT = 7788

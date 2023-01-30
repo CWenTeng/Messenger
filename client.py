@@ -83,10 +83,14 @@ class Client:
         comm.send(source,Constant.FILE_TYPE)
         comm_file = comm.clientRecv_file(tar)
             # persent = next(comm_file)
+        
+        percent = 1
         while True:
             try:
                 persent = next(comm_file)
-                print(persent)
+                if persent[0]/persent[1] > percent/100:
+                    print(f'{persent}---{percent}%')
+                    percent += 1
                 targ_path_entry.config(state=tkinter.NORMAL)
                 # targ_path_entry.insert("1.0",persent)
                 targ_path_entry.delete(0,tkinter.END)
@@ -121,11 +125,21 @@ if __name__ == "__main__":
                     pass
             else:
                 time.sleep(0.1)  
+
+    def heartbeat(c):
+        while True:
+            comm.send('',b'10')
+            time.sleep(10)  
     
     c = Client()
     recv_thread = threading.Thread(target=recv,args=(c,))
     recv_thread.daemon = True
     recv_thread.start()
+    
+    heartbeat_thread = threading.Thread(target=heartbeat,args=(c,))
+    heartbeat_thread.daemon = True
+    heartbeat_thread.start()
+    
     c.start()
     
     print("close")

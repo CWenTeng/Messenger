@@ -39,6 +39,7 @@ class Communication(object):
         try:
             message_type = self.s.recv(1)
             message_len = int(self.s.recv(8), 16)
+            print(f"输出长度{message_len}")
             if message_type == Constant.TEXT_TYPE:
                 reData = self.s.recv(message_len)
                 # 尝试解码方式
@@ -49,10 +50,8 @@ class Communication(object):
             elif message_type == Constant.FILE_TYPE:
                 content = None
                 
-                    
-
         except:
-            traceback.format_exc()
+            traceback.format_exc()  
         else:
             if content and len(content):
                 return (Constant.TEXT_TYPE,content)
@@ -69,7 +68,6 @@ class Communication(object):
                 content = 0
                 with open(tar,'wb') as f:
                     while message_len > content:
-                        print("fa")
                         data = self.s.recv(1024)
                         # if data:
                         f.write(data)

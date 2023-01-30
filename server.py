@@ -44,10 +44,11 @@ class Server():
         send_message = f"{file_len}"
         client.send(Constant.FILE_TYPE+bytes(send_message.encode('utf-8')))
         with open(file_path,'rb') as f:
-            while True:
-                data = f.read(1024)
-                if data:
-                    client.send(data)
+            for f_data in f:
+                # data = f.read(1024)
+                # if data:
+                if f_data:
+                    client.send(f_data)
                 else:
                     print('传输完成')
                     break
@@ -118,7 +119,7 @@ class Server():
             except:
                 print(traceback.format_exc())
                 time.sleep(0.3)
-
+            time.sleep(0.3)
     # 创建链接
     def create_client(self):
         # 接收数据 (单次接收最大字节数)
@@ -160,4 +161,4 @@ time.sleep(1)
 broadcasting_thread.start()
 time.sleep(1)
 up_file_thread.start()
-
+print("start ok")
