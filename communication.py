@@ -75,6 +75,7 @@ class Communication(object):
                         yield (content,message_len)
                         # else:
                         #     break
+                print("{content} / {message_len}")
                 print("接收完毕")
                         
         except:
